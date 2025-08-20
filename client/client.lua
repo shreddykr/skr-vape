@@ -10,14 +10,11 @@ local SMOKE_START_MS    = 5500   -- when smoke starts
 local SMOKE_DURATION_MS = 1800   -- smoke length
 local IDLE_REPEAT_MS    = 1200   -- mini hold/idle loop interval while equipped
 
--- Force-load DLC IPL commonly tied to mpxm3 (helps on some builds)
 CreateThread(function()
     RequestIpl("xm3")
 end)
 
--- Show these metadata keys in ox_inventory tooltips
 CreateThread(function()
-    -- key = metadata table key, value = label shown in tooltip
     exports.ox_inventory:displayMetadata('hits', 'Hits Left')
     exports.ox_inventory:displayMetadata('uses', 'Uses Left')
 end)
@@ -27,7 +24,6 @@ RegisterNetEvent("skr-vape:toggleVapeFromItem", function()
     if isVaping then
         putAwayVape()
     else
-        -- ensure vape has initial hits metadata so it displays in inventory
         TriggerServerEvent('skr-vape:initVapeMeta')
 
         isVaping = true
@@ -37,7 +33,7 @@ RegisterNetEvent("skr-vape:toggleVapeFromItem", function()
     end
 end)
 
--- NOTE: now accepts (itemName, slot) so server can modify the exact bottle
+
 RegisterNetEvent("skr-vape:tryRefill", function(itemName, slot)
     if not exports["skr-vape"]:isVapeEquipped() then
         TriggerEvent("ox_lib:notify", {type = "error", description = "You need to have your vape in-hand to refill!"})
@@ -53,7 +49,7 @@ RegisterNetEvent("skr-vape:tryRefill", function(itemName, slot)
     end, itemName, slot)
 end)
 
--- === MAIN INPUT LOOP (hit / put away) ===
+-- === MAIN INPUT LOOP ===
 CreateThread(function()
     while true do
         Wait(0)
@@ -73,7 +69,7 @@ CreateThread(function()
     end
 end)
 
--- === PROP ATTACH (your emote placement) ===
+-- === PROP ATTACH  ===
 local PROP_MODEL = "xm3_prop_xm3_vape_01a"
 local PROP_BONE  = 28422
 local PROP_POS   = vector3(-0.02, -0.02, 0.02)
@@ -131,12 +127,11 @@ function startIdleLoop()
 
         while isVaping do
             if not isHitting then
-                -- short, upper-body-only replay to keep a subtle stance
                 TaskPlayAnim(PlayerPedId(), EMOTE_DICT, EMOTE_CLIP, 1.0, -1.0, IDLE_REPEAT_MS, 48, 0, false, false, false)
             end
             Wait(IDLE_REPEAT_MS)
         end
-        -- When exiting vaping, we’ll clear anim in putAwayVape()
+        
     end)
 end
 
@@ -149,7 +144,7 @@ function playVapeHit()
     local ped = PlayerPedId()
     isHitting = true
 
-    -- ensure anim dict is ready
+    
     RequestAnimDict(EMOTE_DICT)
     local a0 = GetGameTimer()
     while not HasAnimDictLoaded(EMOTE_DICT) do
@@ -160,7 +155,7 @@ function playVapeHit()
         end
     end
 
-    -- Play the upper-body anim for the full duration
+    
     TaskPlayAnim(ped, EMOTE_DICT, EMOTE_CLIP, 8.0, -8.0, HIT_TOTAL_MS, 48, 0, false, false, false)
 
     -- Schedule smoke start at 5.5s
@@ -171,12 +166,11 @@ function playVapeHit()
         while not HasNamedPtfxAssetLoaded(PTFX_ASSET) do Wait(10) end
         UseParticleFxAssetNextCall(PTFX_ASSET)
 
-        -- IMPORTANT: use the *actual* head bone index, not the raw ID
-        local headBoneIndex = GetPedBoneIndex(ped, 31086) -- SKEL_Head
+        
+        local headBoneIndex = GetPedBoneIndex(ped, 31086) 
         if currentFx then StopParticleFxLooped(currentFx, false) end
 
-        -- Offsets are relative to the bone — X=fwd/back, Y=right/left, Z=up
-        -- Move forward & up so it emits from mouth/nose.
+        
         local offX, offY, offZ = 0.00, 0.30, 0.02
         local rotX, rotY, rotZ = 0.0, 0.0, 0.0
 
@@ -193,10 +187,10 @@ function playVapeHit()
         currentFx = nil
     end)
 
-    -- Stop the hit anim after 7s, resume idle loop
+    
     CreateThread(function()
         Wait(HIT_TOTAL_MS)
-        ClearPedSecondaryTask(ped) -- stops the hit anim, not the prop
+        ClearPedSecondaryTask(ped) 
         isHitting = false
     end)
 end
@@ -227,19 +221,20 @@ end
 -- === EXPORTS REQUIRED BY OX INVENTORY ITEMS ===
 exports("isVapeEquipped", function() return isVaping end)
 
--- toggleVapeFromItem may receive an item table from ox_inventory; we don't need it for toggling
+
 exports("toggleVapeFromItem", function(_item)
     TriggerEvent("skr-vape:toggleVapeFromItem")
 end)
 
--- IMPORTANT: tryRefill MUST accept the item table; forward name+slot to the event
+
 exports("tryRefill", function(item)
     local name, slot = nil, nil
     if type(item) == "table" then
         name = item.name
         slot = item.slot
     else
-        name = item -- fallback
+        name = item 
     end
     TriggerEvent("skr-vape:tryRefill", name, slot)
 end)
+
