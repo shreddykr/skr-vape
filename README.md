@@ -6,16 +6,29 @@
 
 ## ✨ Features
 
-- ✅ **Reusable Vape Kit** (200 hits per kit by default)  
-- ✅ **Refillable with Vape Juice bottles** (configurable, each bottle has limited uses)  
-- ✅ **Durability shown in ox_inventory tooltips** (`Hits Left`, `Uses Left`)  
-- ✅ **Custom animations** (7s hit with smoke at 5.5s)  
-- ✅ **Prop support** (Using Rockstars DLC)  
-- ✅ **ox_lib UI overlay** — shows `[E] Hit Vape` / `[X] Put Away` when equipped  
-- ✅ **OneSync compatible** — smoke and animations sync with nearby players  
-- ✅ **Easy config** — add/remove refill bottles in `config.lua`
-- ✅ **11 Defualt Juices** — create more in the config file `config.lua`
+✅ Reusable Vape Kit (50 hits per kit by default)
 
+✅ Refillable with Vape Juice bottles (configurable, each bottle has limited uses but refills the vape)
+
+✅ Durability in ox_inventory tooltips (Hits Left, Uses Left)
+
+✅ Custom animation flow — 7s hit with smoke at 5.5s, frozen first-frame idle while held
+
+✅ Green “buzz/alien” screen effect — smooth fade in/out (half strength) on exhale
+
+✅ Stress relief on hit — supports QBCore (qb-hud/ps-hud)
+
+✅ Prop support — uses Rockstar DLC model (no extra commands for players)
+
+✅ ox_lib UI overlay — [E] Hit Vape / [X] Put Away
+
+✅ OneSync compatible — smoke/animations visible to nearby players
+
+✅ Auto re-freeze & reattach — fixes pose/prop after doors/interior changes
+
+✅ Easy config — add/remove refill bottles in config.lua
+
+✅ 11 Default Juices — create more in config.lua
 ---
 
 ## 📦 Requirements
