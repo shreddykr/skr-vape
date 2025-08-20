@@ -1,0 +1,126 @@
+local ox_inventory = exports.ox_inventory
+
+-- puff: decrement vape hits and persist metadata
+RegisterServerEvent("skr-vape:useHit", function()
+    local src = source
+    local vapeItem = Config.VapeItem
+
+    local item = ox_inventory:GetSlotWithItem(src, vapeItem)
+    if not item then return end
+
+    local meta  = item.metadata or {}
+    local hits  = tonumber(meta.hits) or Config.MaxHits
+
+    hits = hits - 1
+
+    if hits <= 0 then
+        ox_inventory:RemoveItem(src, vapeItem, 1, nil, item.slot)
+        TriggerClientEvent("ox_lib:notify", src, {type = "error", description = "Your vape is empty!"})
+    else
+        meta.hits = hits
+        ox_inventory:SetMetadata(src, item.slot, meta)
+        -- Optional: echo remaining hits
+        -- TriggerClientEvent("ox_lib:notify", src, {type = "inform", description = ("Hits left: %d/%d"):format(hits, Config.MaxHits)})
+    end
+end)
+
+-- ensure vape metadata exists so it shows in inventory
+RegisterServerEvent('skr-vape:initVapeMeta', function()
+    local src = source
+    local item = ox_inventory:GetSlotWithItem(src, Config.VapeItem)
+    if not item then return end
+
+    local meta = item.metadata or {}
+    if tonumber(meta.hits) == nil then
+        meta.hits = Config.MaxHits
+        ox_inventory:SetMetadata(src, item.slot, meta)
+    end
+end)
+
+-- Refill: add hits from a specific bottle slot, consume bottle uses; block if full
+lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot)
+    local player = source
+
+    -- validate config
+    local refillCfg = Config.RefillItems[refillItem]
+    if not refillCfg then
+        return false, "Invalid refill type."
+    end
+
+    -- find the vape
+    local vape = ox_inventory:GetSlotWithItem(player, Config.VapeItem)
+    if not vape then
+        return false, "You don't have a vape."
+    end
+
+    local vMeta = vape.metadata or {}
+    local currentHits = tonumber(vMeta.hits) or 0
+
+    if currentHits >= Config.MaxHits then
+        return false, "Your vape is already full."
+    end
+
+    -- get the EXACT bottle the player used (by slot if provided)
+    local refill
+    if refillSlot then
+        refill = ox_inventory:GetSlot(player, refillSlot)
+        if refill and refill.name ~= refillItem then
+            -- slot mismatch or player moved items; fall back to name lookup
+            refill = nil
+        end
+    end
+    if not refill then
+        refill = ox_inventory:GetSlotWithItem(player, refillItem)
+    end
+
+    if not refill then
+        return false, "You don't have that refill."
+    end
+
+    -- read/initialize bottle uses
+    local rMeta = refill.metadata or {}
+    local uses  = tonumber(rMeta.uses) or tonumber(refillCfg.uses) or 1
+    if uses <= 0 then
+        return false, "That bottle is empty."
+    end
+
+    -- apply refill amount, clamp
+    local amount  = tonumber(refillCfg.amount) or 0
+    local newHits = currentHits + amount
+    if newHits > Config.MaxHits then newHits = Config.MaxHits end
+
+    -- save vape hits
+    vMeta.hits = newHits
+    ox_inventory:SetMetadata(player, vape.slot, vMeta)
+
+    -- decrement bottle uses and save/remove
+    uses = uses - 1
+    if uses > 0 then
+        rMeta.uses = uses
+        ox_inventory:SetMetadata(player, refill.slot, rMeta)
+    else
+        ox_inventory:RemoveItem(player, refillItem, 1, nil, refill.slot)
+    end
+
+    return true, ("Refilled. Hits: %d/%d"):format(newHits, Config.MaxHits)
+end)
+
+local resourceName = GetCurrentResourceName()
+local currentVersion = GetResourceMetadata(resourceName, 'version', 0)
+
+CreateThread(function()
+    PerformHttpRequest("https://raw.githubusercontent.com/shreddykr/skr-vape/main/versions.txt", function(code, res, _)
+        if code == 200 then
+            local latestVersion = res:match("%S+")
+            if currentVersion ~= latestVersion then
+                print(("^3[%s]^0 Update available! ^1(%s → %s)^0"):format(resourceName, currentVersion, latestVersion))
+                print("^3[" .. resourceName .. "]^0 Download latest: ^5https://github.com/shreddykr/skr-vape^0")
+            else
+                print("^2[" .. resourceName .. "]^0 is up to date. (^2" .. currentVersion .. "^0)")
+            end
+        else
+            print("^1[" .. resourceName .. "]^0 Version check failed. Could not reach GitHub.")
+        end
+    end, "GET", "", {})
+end)
+
