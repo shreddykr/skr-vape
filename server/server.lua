@@ -1,6 +1,5 @@
 local ox_inventory = exports.ox_inventory
 
--- puff: decrement vape hits and persist metadata
 RegisterServerEvent("skr-vape:useHit", function()
     local src = source
     local vapeItem = Config.VapeItem
@@ -19,12 +18,9 @@ RegisterServerEvent("skr-vape:useHit", function()
     else
         meta.hits = hits
         ox_inventory:SetMetadata(src, item.slot, meta)
-        -- Optional: echo remaining hits
-        -- TriggerClientEvent("ox_lib:notify", src, {type = "inform", description = ("Hits left: %d/%d"):format(hits, Config.MaxHits)})
     end
 end)
 
--- ensure vape metadata exists so it shows in inventory
 RegisterServerEvent('skr-vape:initVapeMeta', function()
     local src = source
     local item = ox_inventory:GetSlotWithItem(src, Config.VapeItem)
@@ -37,17 +33,16 @@ RegisterServerEvent('skr-vape:initVapeMeta', function()
     end
 end)
 
--- Refill: add hits from a specific bottle slot, consume bottle uses; block if full
 lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot)
     local player = source
 
-    -- validate config
+    
     local refillCfg = Config.RefillItems[refillItem]
     if not refillCfg then
         return false, "Invalid refill type."
     end
 
-    -- find the vape
+    
     local vape = ox_inventory:GetSlotWithItem(player, Config.VapeItem)
     if not vape then
         return false, "You don't have a vape."
@@ -60,12 +55,12 @@ lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot
         return false, "Your vape is already full."
     end
 
-    -- get the EXACT bottle the player used (by slot if provided)
+    
     local refill
     if refillSlot then
         refill = ox_inventory:GetSlot(player, refillSlot)
         if refill and refill.name ~= refillItem then
-            -- slot mismatch or player moved items; fall back to name lookup
+            
             refill = nil
         end
     end
@@ -77,23 +72,23 @@ lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot
         return false, "You don't have that refill."
     end
 
-    -- read/initialize bottle uses
+    
     local rMeta = refill.metadata or {}
     local uses  = tonumber(rMeta.uses) or tonumber(refillCfg.uses) or 1
     if uses <= 0 then
         return false, "That bottle is empty."
     end
 
-    -- apply refill amount, clamp
+    
     local amount  = tonumber(refillCfg.amount) or 0
     local newHits = currentHits + amount
     if newHits > Config.MaxHits then newHits = Config.MaxHits end
 
-    -- save vape hits
+    
     vMeta.hits = newHits
     ox_inventory:SetMetadata(player, vape.slot, vMeta)
 
-    -- decrement bottle uses and save/remove
+    
     uses = uses - 1
     if uses > 0 then
         rMeta.uses = uses
@@ -123,4 +118,5 @@ CreateThread(function()
         end
     end, "GET", "", {})
 end)
+
 
