@@ -1,4 +1,4 @@
-## SKR Vape
+## ☁️ [OX] Advanced Vape Script | Vape Kit | Disposables | FiveM
 
 ---
 ## Preview
@@ -6,19 +6,21 @@
 
 ## ✨ Features
 
-✅ Reusable Vape Kit (50 hits per kit by default)
+✅ Reusable Vape Kit (50 hits till refill)
 
-✅ Refillable with Vape Juice bottles (configurable, each bottle has limited uses but refills the vape)
+✅ 8 Custom Elfbar Props (500 hits auto removes from inventory)
+
+✅ 11 Default Juices — create more in config.lua
 
 ✅ Durability in ox_inventory tooltips (Hits Left, Uses Left)
 
-✅ Custom animation flow — 7s hit with smoke at 5.5s, frozen first-frame idle while held
+✅ Custom animation flow 
 
-✅ Green “buzz/alien” screen effect — smooth fade in/out (half strength) on exhale
+✅ Green “buzz/alien” screen effect
 
 ✅ Stress relief on hit — supports QBCore (qb-hud/ps-hud)
 
-✅ Prop support — uses Rockstar DLC model (no extra commands for players)
+✅ Prop support — uses Rockstar DLC model & 8 Custom Elfbar Models
 
 ✅ ox_lib UI overlay — [E] Hit Vape / [X] Put Away
 
@@ -28,7 +30,6 @@
 
 ✅ Easy config — add/remove refill bottles in config.lua
 
-✅ 11 Default Juices — create more in config.lua
 ---
 
 ## 📦 Requirements
@@ -167,4 +168,61 @@
 				export = 'skr-vape.tryRefill',
 			}
 		},
+		['vape_elfbar_blueberry'] = {
+			label = 'Elfbar Blueberry (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+		['vape_elfbar_cola'] = {
+			label = 'Elfbar Cola (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+		['vape_elfbar_grape'] = {
+			label = 'Elfbar Grape (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+		['vape_elfbar_kiwi'] = {
+			label = 'Elfbar Kiwi (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+		['vape_elfbar_mango'] = {
+			label = 'Elfbar Mango (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+		['vape_elfbar_melon'] = {
+			label = 'Elfbar Melon (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+		['vape_elfbar_strawberry'] = {
+			label = 'Elfbar Strawberry (Disposable)',
+			weight = 50,
+			stack = false,
+			close = true,
+			description = 'Disposable vape — 500 hits. Not refillable.',
+			client = { export = 'skr-vape.toggleDisposableFromItem' },
+		},
+
 
