@@ -2,7 +2,7 @@
 
 ---
 ## 📹 Preview
-[Click Here](https://youtu.be/IMLfzVjicos?si=JRQNjh36chyK1dsU)
+[Click Here](https://www.youtube.com/watch?v=I6zYTE9NEbI)
 
 <img width="1165" height="488" alt="Screenshot 2025-08-20 234340" src="https://github.com/user-attachments/assets/1757e074-82b8-4ebd-bd98-87566af1a115" />
 <img width="1167" height="486" alt="Screenshot 2025-08-20 234326" src="https://github.com/user-attachments/assets/1f3c42bc-12f8-4de9-b7a5-5bf1467c2a32" />
