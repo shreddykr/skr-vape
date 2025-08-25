@@ -15,7 +15,7 @@
 
 ✅ Reusable Vape Kit (50 hits till refill)
 
-✅ 8 Custom Elfbar Props (500 hits auto removes from inventory)
+✅ 7 Custom Elfbar Props (500 hits auto removes from inventory)
 
 ✅ 11 Default Juices — create more in config.lua
 
