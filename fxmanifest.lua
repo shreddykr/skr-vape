@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'shreddykr'
 description 'SKR Vape Kit with Refill & Disposable Vapes'
-version '1.0.2'
+version '1.0.3'
 
 shared_script '@ox_lib/init.lua'
 shared_script 'shared/config.lua'
@@ -24,3 +24,4 @@ files {
 }
 
 data_file 'DLC_ITYP_REQUEST' 'stream/*.ytyp'
+
