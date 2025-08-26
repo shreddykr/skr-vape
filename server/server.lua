@@ -52,7 +52,6 @@ RegisterServerEvent("skr-vape:useHit", function(itemName, slot)
     local maxHits = isReusable and Config.MaxHits or ((Config.DisposableItems and Config.DisposableItems[itemName] and tonumber(Config.DisposableItems[itemName].maxHits)) or 500)
     local hits = tonumber(meta.hits) or maxHits
 
-  
     if hits <= 0 then
         if isReusable then
             TriggerClientEvent("ox_lib:notify", src, { type = "error", description = "Your vape is empty. Refill it." })
@@ -62,7 +61,6 @@ RegisterServerEvent("skr-vape:useHit", function(itemName, slot)
         return
     end
 
-  
     hits = hits - 1
 
     if isReusable then
@@ -72,7 +70,7 @@ RegisterServerEvent("skr-vape:useHit", function(itemName, slot)
             TriggerClientEvent("ox_lib:notify", src, { type = "inform", description = "Your vape is empty. Use a refill bottle." })
         end
     else
-       
+        
         if hits <= 0 then
             ox_inventory:RemoveItem(src, item.name, 1, nil, item.slot)
             TriggerClientEvent("ox_lib:notify", src, { type = "inform", description = "Your disposable vape is finished." })
@@ -83,17 +81,14 @@ RegisterServerEvent("skr-vape:useHit", function(itemName, slot)
     end
 end)
 
-
 lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot)
     local player = source
 
-    
     local refillCfg = Config.RefillItems and Config.RefillItems[refillItem]
     if not refillCfg then
         return false, "Invalid refill type."
     end
 
-    
     local vape = ox_inventory:GetSlotWithItem(player, Config.VapeItem)
     if not vape then
         return false, "You don't have a vape."
@@ -106,7 +101,6 @@ lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot
         return false, "Your vape is already full."
     end
 
-    
     local refill
     if refillSlot then
         refill = ox_inventory:GetSlot(player, refillSlot)
@@ -131,11 +125,9 @@ lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot
     local newHits = currentHits + amount
     if newHits > Config.MaxHits then newHits = Config.MaxHits end
 
-    
     vMeta.hits = newHits
     ox_inventory:SetMetadata(player, vape.slot, vMeta)
 
-    
     uses = uses - 1
     if uses > 0 then
         rMeta.uses = uses
@@ -146,6 +138,27 @@ lib.callback.register("skr-vape:refill", function(source, refillItem, refillSlot
 
     return true, ("Refilled. Hits: %d/%d"):format(newHits, Config.MaxHits)
 end)
+
+
+RegisterNetEvent('skr-vape:smokeNow', function()
+    local src = source
+    local srcPed = GetPlayerPed(src)
+    if not srcPed then return end
+
+    local srcCoords = GetEntityCoords(srcPed)
+    local radius = 60.0 
+
+    for _, id in ipairs(GetPlayers()) do
+        local ped = GetPlayerPed(id)
+        if ped then
+            local dist = #(GetEntityCoords(ped) - srcCoords)
+            if dist <= radius then
+                TriggerClientEvent('skr-vape:playSmoke', id, src)
+            end
+        end
+    end
+end)
+
 
 
 local resourceName = GetCurrentResourceName()
