@@ -7,11 +7,13 @@ local lastVapeUse     = 0
 
 local activeItem      = nil
 
+-- Timing (ms)
 local HIT_TOTAL_MS       = 7000   -- full hit length
 local SMOKE_START_MS     = 5500   -- when smoke begins
 local SMOKE_DURATION_MS  = 1800   -- smoke length
 local IDLE_POSE_TIME     = 0.0    -- freeze on the very first frame
 
+-- Buzz/alien screen effect
 local BUZZ_IN_MS         = 400    -- fade-in
 local BUZZ_HOLD_MS       = 2000   -- hold at peak
 local BUZZ_OUT_MS        = 500    -- fade-out
@@ -19,29 +21,24 @@ local BUZZ_TCMOD         = "drug_flying_base" -- green-ish vibe
 local BUZZ_STEPS         = 20
 local BUZZ_MAX_STRENGTH  = 0.5
 
-
+-- Stress relief per hit (adjust for your server)
 local STRESS_RELIEF      = 10
-
 
 CreateThread(function()
     RequestIpl("xm3")
 end)
-
 
 CreateThread(function()
     exports.ox_inventory:displayMetadata('hits', 'Hits Left')
     exports.ox_inventory:displayMetadata('uses', 'Uses Left')
 end)
 
-
 local function equipCommon(itemName, slot, itemType)
     activeItem = { name = itemName, slot = slot, type = itemType }
 
-   
     if itemType == 'reusable' then
         TriggerServerEvent('skr-vape:initVapeMeta')
     else
-       
         TriggerServerEvent('skr-vape:initDisposableMeta', itemName, slot)
     end
 
@@ -56,7 +53,6 @@ RegisterNetEvent("skr-vape:toggleVapeFromItem", function(itemName, slot)
     if isVaping then
         putAwayVape()
     else
-        
         equipCommon(itemName or Config.VapeItem, slot, 'reusable')
     end
 end)
@@ -102,9 +98,15 @@ CreateThread(function()
                         
                         TriggerServerEvent("skr-vape:useHit", Config.VapeItem, nil)
                     end
-                    playVapeHit()  
+
+                    
+                    playVapeHit()
+
+                    
+                    TriggerServerEvent("skr-vape:smokeNow")
                 end
             end
+
             if IsControlJustPressed(0, Config.KeyPutAway) then
                 putAwayVape()
             end
@@ -113,18 +115,50 @@ CreateThread(function()
 end)
 
 
+RegisterNetEvent('skr-vape:playSmoke', function(serverId)
+    local tgt = GetPlayerFromServerId(serverId)
+    if tgt == -1 then return end
+
+    local ped = GetPlayerPed(tgt)
+
+    CreateThread(function()
+        Wait(SMOKE_START_MS)
+
+        local asset = "scr_agencyheistb"
+        local name  = "scr_agency3b_elec_box"
+        RequestNamedPtfxAsset(asset)
+        while not HasNamedPtfxAssetLoaded(asset) do Wait(0) end
+        UseParticleFxAssetNextCall(asset)
+
+        local head = GetPedBoneIndex(ped, 31086) 
+
+        local offX, offY, offZ = 0.00, 0.30, 0.02
+        local rotX, rotY, rotZ = 0.0, 0.0, 0.0
+        local scale = 1.4
+        local duration = 1800
+
+        local fx = StartParticleFxLoopedOnEntityBone(
+            name, ped,
+            offX, offY, offZ,
+            rotX, rotY, rotZ,
+            head,
+            scale, false, false, false
+        )
+
+        Wait(duration)
+        if fx then StopParticleFxLooped(fx, false) end
+    end)
+end)
+
+
 local function getModelForItem(itemName, itemType)
     if itemType == 'reusable' then
         return Config.VapeModel or "xm3_prop_xm3_vape_01a"
     end
-
-   
     local d = Config.DisposableItems and Config.DisposableItems[itemName]
     if d and d.model and d.model ~= "" then
         return d.model
     end
-
-    
     return Config.VapeModel or "xm3_prop_xm3_vape_01a"
 end
 
@@ -134,7 +168,6 @@ function attachVapeProp(itemName, itemType)
     local modelName = getModelForItem(itemName, itemType)
     local modelHash = joaat(modelName)
 
-    
     print(("[skr-vape] Attach prop -> item: %s | type: %s | model: %s")
         :format(tostring(itemName), tostring(itemType), tostring(modelName)))
 
@@ -160,7 +193,6 @@ function attachVapeProp(itemName, itemType)
         return
     end
 
-    
     local bone, pos, rot
     if itemType == 'disposable' then
         local d = Config.DisposableItems and Config.DisposableItems[itemName]
@@ -175,8 +207,8 @@ function attachVapeProp(itemName, itemType)
         end
     else
         bone = 28422
-        pos  = vec3(-0.02, -0.02, 0.02)          
-        rot  = vec3(58.0, 110.0, 10.0)           
+        pos  = vec3(-0.02, -0.02, 0.02)        
+        rot  = vec3(58.0, 110.0, 10.0)          
     end
 
     AttachEntityToEntity(
@@ -194,7 +226,6 @@ function removeVapeProp()
     vapeProp = nil
 end
 
-
 local EMOTE_DICT = "amb@world_human_smoking@male@male_b@base"
 local EMOTE_CLIP = "base"
 
@@ -209,7 +240,7 @@ local function refreezeIdlePose()
 
     TaskPlayAnim(ped, EMOTE_DICT, EMOTE_CLIP, 1.0, -1.0, -1, 48, 0, false, false, false)
     Wait(0)
-    SetEntityAnimCurrentTime(ped, EMOTE_DICT, EMOTE_CLIP, IDLE_POSE_TIME)
+    SetEntityAnimCurrentTime(ped, EMOTE_DICT, EMOTE_CLIP, IDLE_POSE_TIME) -- 0.0
     SetEntityAnimSpeed(ped, EMOTE_DICT, EMOTE_CLIP, 0.0)
 end
 
@@ -243,15 +274,15 @@ function playVapeHit()
         end
     end
 
-    
+
     SetEntityAnimSpeed(ped, EMOTE_DICT, EMOTE_CLIP, 1.0)
     TaskPlayAnim(ped, EMOTE_DICT, EMOTE_CLIP, 8.0, -8.0, HIT_TOTAL_MS, 48, 0, false, false, false)
 
-    
+
     CreateThread(function()
         Wait(SMOKE_START_MS)
 
-        
+
         RequestNamedPtfxAsset(PTFX_ASSET)
         while not HasNamedPtfxAssetLoaded(PTFX_ASSET) do Wait(10) end
         UseParticleFxAssetNextCall(PTFX_ASSET)
@@ -259,7 +290,7 @@ function playVapeHit()
         local headBoneIndex = GetPedBoneIndex(ped, 31086) 
         if currentFx then StopParticleFxLooped(currentFx, false) end
 
-        
+
         local offX, offY, offZ = 0.00, 0.30, 0.02
         local rotX, rotY, rotZ = 0.0, 0.0, 0.0
 
@@ -271,7 +302,7 @@ function playVapeHit()
             PTFX_SCALE, false, false, false
         )
 
-        
+
         applyBuzzEffect()
         relieveStress(STRESS_RELIEF)
 
@@ -316,6 +347,7 @@ function putAwayVape()
     ClearTimecycleModifier()
 end
 
+
 function applyBuzzEffect()
     SetTimecycleModifier(BUZZ_TCMOD)
 
@@ -335,6 +367,7 @@ function applyBuzzEffect()
     end
     ClearTimecycleModifier()
 end
+
 
 local function resourceActive(name)
     local state = GetResourceState(name)
@@ -359,7 +392,6 @@ function relieveStress(amount)
     end
 end
 
--- === WATCHDOG
 CreateThread(function()
     local lastInterior = -1
     while true do
@@ -387,9 +419,7 @@ CreateThread(function()
     end
 end)
 
-
 exports("isVapeEquipped", function() return isVaping end)
-
 
 exports("toggleVapeFromItem", function(item)
     local name, slot = Config.VapeItem, nil
