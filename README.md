@@ -1,4 +1,4 @@
-## ☁️ [OX-QB] Advanced Vape Script | Vape Kit | Disposables | FiveM
+## ☁️ [QB/OX] Advanced Vape Script | Vape Kit | Disposables | FiveM
 
 ---
 ## 📹 Preview
@@ -13,35 +13,34 @@
 
 ## ✨ Features
 
-✅ Reusable Vape Kit (50 hits till refill)
+✅ Reusable Vape Kit
 
-✅ 7 Custom Elfbar Props (75 hits auto removes from inventory)
+✅ 7 Custom Elfbar Props
 
-✅ 11 Default Juices — create more in config.lua
+✅ 11 Default Juices
 
-✅ Durability in ox_inventory/qb-inventory tooltips
+✅ Hits/Uses left in inventory tooltips
 
 ✅ Custom animation flow 
 
 ✅ Green “buzz/alien” screen effect
 
-✅ Stress relief on hit — supports QBCore
+✅ Stress relief on hit 
 
-✅ Prop support — uses Rockstar DLC model & 8 Custom Elfbar Models
+✅ ox_lib UI overlay 
 
-✅ ox_lib UI overlay — [E] Hit Vape / [X] Put Away
+✅ OneSync compatible
 
-✅ OneSync compatible — smoke/animations visible to nearby players
+✅ Auto re-freeze & reattach 
 
-✅ Auto re-freeze & reattach — fixes pose/prop after doors/interior changes
-
-✅ Easy config — add/remove refill bottles in config.lua
+✅ Easy config 
 
 ---
 
 ## 📦 Requirements
 - [ox_lib](https://github.com/overextended/ox_lib)  
 - OneSync
+
 
 ---
 
