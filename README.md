@@ -15,17 +15,17 @@
 
 ✅ Reusable Vape Kit (50 hits till refill)
 
-✅ 7 Custom Elfbar Props (500 hits auto removes from inventory)
+✅ 7 Custom Elfbar Props (75 hits auto removes from inventory)
 
 ✅ 11 Default Juices — create more in config.lua
 
-✅ Durability in ox_inventory tooltips (Hits Left, Uses Left)
+✅ Durability in ox_inventory tooltips
 
 ✅ Custom animation flow 
 
 ✅ Green “buzz/alien” screen effect
 
-✅ Stress relief on hit — supports QBCore (qb-hud/ps-hud)
+✅ Stress relief on hit — supports QBCore
 
 ✅ Prop support — uses Rockstar DLC model & 8 Custom Elfbar Models
 
