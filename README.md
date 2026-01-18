@@ -54,4 +54,7 @@
 3. ensure skr-vape in server cfg after the inventory and ox lib
 
 
+## ☕ [Buy me a coffee](https://buymeacoffee.com/skrscripts)
+
+
 
