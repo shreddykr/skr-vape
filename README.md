@@ -1,4 +1,4 @@
-## ☁️ [OX] Advanced Vape Script | Vape Kit | Disposables | FiveM
+## ☁️ [OX-QB] Advanced Vape Script | Vape Kit | Disposables | FiveM
 
 ---
 ## 📹 Preview
@@ -19,7 +19,7 @@
 
 ✅ 11 Default Juices — create more in config.lua
 
-✅ Durability in ox_inventory tooltips
+✅ Durability in ox_inventory/qb-inventory tooltips
 
 ✅ Custom animation flow 
 
@@ -40,10 +40,8 @@
 ---
 
 ## 📦 Requirements
-
-- [ox_inventory](https://github.com/overextended/ox_inventory)  
 - [ox_lib](https://github.com/overextended/ox_lib)  
-- OneSync (Infinity or Legacy) **enabled**
+- OneSync
 
 ---
 
@@ -53,6 +51,7 @@
 2. Install items and images to ox inventory
 3. ensure skr-vape in server cfg after the inventory and ox lib
 
+---
 
 ## ☕ [Buy me a coffee](https://buymeacoffee.com/skrscripts)
 
